@@ -35,6 +35,7 @@ You are an expert code reviewer and teacher.
 
 1. Summarize the following Pull Request diff in **simple language**.
 2. Then review the code and suggest improvements, point out bugs or best practices.
+3. Comment should not be more then 100 words.
 
 Code Diff:
 ${diff}
