@@ -36,6 +36,10 @@ Based on the Git diff below, do the following:
 2. Detect any potential **breaking changes** and list them if found.
 3. Suggest a suitable GitHub label from: \`bug\`, \`feature\`, \`refactor\`, \`docs\`, \`test\`, \`chore\`.
 4. Provide a short code review in **less than 100 words**.
+5. Summary should be concise and accurate.
+6. **Do not change in code.**
+7. ** Remember the 4th point always.**
+
 
 Format your response like this:
 
