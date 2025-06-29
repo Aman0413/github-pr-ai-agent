@@ -39,6 +39,7 @@ Based on the Git diff below, do the following:
 5. Summary should be concise and accurate.
 6. **Do not change in code.**
 7. ** Remember the 4th point always.**
+8. **Do not use AI Code Summary & Review: as heading**
 
 
 Format your response like this:
