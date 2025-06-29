@@ -17,6 +17,11 @@ const token = process.env.GITHUB_TOKEN;
 
 const octokit = new Octokit({ auth: token });
 
+if (!owner || !repoName || !prNumber) {
+  console.error("Missing repo or PR number info.");
+  process.exit(1);
+}
+
 (async () => {
   try {
     // Get the latest diff
@@ -71,9 +76,19 @@ ${diff}
     const aiOutput = response.text;
     console.log(aiOutput);
 
-    // Extract label from AI response
-    const labelMatch = aiOutput.match(/Suggested Label:\s*`(.+?)`/);
-    const suggestedLabel = labelMatch ? labelMatch[1] : null;
+    // Separate JSON suggestions from label
+    const labelMatch = aiText.match(/Suggested Label:\s*`(.+?)`/);
+    const label = labelMatch?.[1] ?? null;
+    const jsonPart = aiText.split("Suggested Label:")[0].trim();
+
+    let suggestions = [];
+
+    try {
+      suggestions = JSON.parse(jsonPart);
+    } catch (err) {
+      console.error(" Failed to parse AI output as JSON.");
+      console.error(jsonPart);
+    }
 
     // Post the comment
     await octokit.issues.createComment({
@@ -100,6 +115,45 @@ ${diff}
       }
     } else {
       console.log(" No label detected from AI.");
+    }
+
+    // Get commit SHA
+    const pr = await octokit.pulls.get({
+      owner,
+      repo: repoName,
+      pull_number: prNumber,
+    });
+
+    const commitId = pr.data.head.sha;
+
+    // Post inline comments
+    for (const s of suggestions) {
+      try {
+        await octokit.pulls.createReviewComment({
+          owner,
+          repo: repoName,
+          pull_number: prNumber,
+          commit_id: commitId,
+          path: s.file,
+          line: s.line,
+          side: "RIGHT",
+          body: s.comment,
+        });
+        console.log(`Commented on ${s.file}:${s.line}`);
+      } catch (err) {
+        console.warn(
+          `Failed to comment on ${s.file}:${s.line} – ${err.message}`
+        );
+      }
+    }
+    // Post fallback summary comment
+    if (suggestions.length === 0) {
+      await octokit.issues.createComment({
+        owner,
+        repo: repoName,
+        issue_number: prNumber,
+        body: `AI reviewed the code but didn't find line-specific suggestions. Here's the full output:\n\n${aiText}`,
+      });
     }
   } catch (error) {
     console.error(" Error:", error);
