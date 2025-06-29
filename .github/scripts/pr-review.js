@@ -20,10 +20,30 @@ const token = process.env.GITHUB_TOKEN;
 
 // GitHub App credentials
 const appId = process.env.APP_ID;
-const installationId = process.env.INSTALLATION_ID;
+// const installationId = process.env.INSTALLATION_ID;
 const privateKey = fs.readFileSync(process.env.PRIVATE_KEY_PATH, "utf8");
 
-// Use GitHub App auth
+// Authenticate app
+const octokitApp = new Octokit({
+  authStrategy: createAppAuth,
+  auth: {
+    appId,
+    privateKey,
+  },
+});
+
+// Fetch installation ID for the repo
+const installation = await octokitApp.request(
+  "GET /repos/{owner}/{repo}/installation",
+  {
+    owner,
+    repo: repoName,
+  }
+);
+
+const installationId = installation.data.id;
+
+// Now use that installationId for authenticated Octokit instance
 const octokit = new Octokit({
   authStrategy: createAppAuth,
   auth: {
