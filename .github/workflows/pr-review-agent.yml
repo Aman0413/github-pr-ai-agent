@@ -1,5 +1,4 @@
 name: PR AI Agent
-
 on:
   pull_request:
     types: [opened, synchronize, reopened]
@@ -13,16 +12,22 @@ jobs:
         uses: actions/checkout@v3
         with:
           fetch-depth: 2
+
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
           node-version: "18"
 
-      - name: Install Gemini
-        run: npm install @google/genai
+      - name: Install dependencies
+        run: npm install
+
+      - name: Save GitHub App private key to file
+        run: echo "${{ secrets.PRIVATE_KEY }}" > .github/app-private-key.pem
 
       - name: Run PR AI review
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-          GITHUB_TOKEN: ${{ secrets.GH_BOT_TOKEN }}
+          APP_ID: ${{ secrets.APP_ID }}
+          INSTALLATION_ID: ${{ secrets.INSTALLATION_ID }}
+          PRIVATE_KEY_PATH: .github/app-private-key.pem
         run: node .github/scripts/pr-review.js
