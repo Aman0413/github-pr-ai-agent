@@ -2,7 +2,7 @@ import dotenv from "dotenv";
 import { GoogleGenAI } from "@google/genai";
 import { Octokit } from "@octokit/rest";
 import { execSync } from "child_process";
-import { App as GitHubApp } from "@octokit/app";
+import { createAppAuth } from "@octokit/auth-app";
 import { getInlineComments } from "./inlineReview.js";
 import fs from "fs";
 
@@ -23,10 +23,15 @@ const appId = process.env.APP_ID;
 const installationId = process.env.INSTALLATION_ID;
 const privateKey = fs.readFileSync(process.env.PRIVATE_KEY_PATH, "utf8");
 
-// GitHub App Auth
-const app = new GitHubApp({ appId, privateKey });
-const auth = await app.getInstallationAccessToken(+installationId);
-const octokit = new Octokit({ auth: token });
+// Use GitHub App auth
+const octokit = new Octokit({
+  authStrategy: createAppAuth,
+  auth: {
+    appId,
+    privateKey,
+    installationId,
+  },
+});
 
 if (!owner || !repoName || !prNumber) {
   console.error("Missing repo or PR number info.");
