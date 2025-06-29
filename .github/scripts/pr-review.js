@@ -79,7 +79,7 @@ ${diff}
 
     // Separate JSON suggestions from label
     const labelMatch = aiText.match(/Suggested Label:\s*`(.+?)`/);
-    const label = labelMatch?.[1] ?? null;
+    const suggestedLabel = labelMatch?.[1] ?? null;
     const jsonPart = aiText.split("Suggested Label:")[0].trim();
 
     let suggestions = [];
