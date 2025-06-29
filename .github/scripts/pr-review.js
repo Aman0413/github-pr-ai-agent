@@ -82,6 +82,7 @@ ${diff}
     const suggestedLabel = labelMatch?.[1] ?? null;
     const jsonPart = aiText.split("Suggested Label:")[0].trim();
 
+    // hello
     let suggestions = [];
 
     try {
