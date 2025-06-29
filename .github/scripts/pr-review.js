@@ -80,7 +80,7 @@ ${diff}
       owner,
       repo: repoName,
       issue_number: prNumber,
-      body: { aiOutput },
+      body: aiOutput,
     });
 
     console.log("Review comment posted.");
