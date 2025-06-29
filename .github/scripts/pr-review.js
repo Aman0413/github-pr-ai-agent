@@ -21,23 +21,36 @@ const octokit = new Octokit({ auth: token });
   try {
     // Get the latest diff
     let diff = "";
-
     try {
       diff = execSync("git diff HEAD^1 HEAD").toString();
     } catch (err) {
-      console.warn("No previous commit found. Falling back to full diff.");
+      console.warn(" No previous commit found. Using full diff.");
       diff = execSync("git diff").toString();
     }
 
-    // PROMPT: summarize + review
     const prompt = `
-You are an expert code reviewer and teacher.
+You're an expert AI code reviewer.
 
-1. Summarize the following Pull Request diff in **simple language**.
-2. Then review the code and suggest improvements, point out bugs or best practices.
-3. Comment should not be more then 100 words.
+Based on the Git diff below, do the following:
+1. Summarize the code changes in simple language.
+2. Detect any potential **breaking changes** and list them if found.
+3. Suggest a suitable GitHub label from: \`bug\`, \`feature\`, \`refactor\`, \`docs\`, \`test\`, \`chore\`.
+4. Provide a short code review in **less than 100 words**.
 
-Code Diff:
+Format your response like this:
+
+**Summary:**
+- ...
+
+**Breaking Changes:**
+- ...
+
+**Suggested Label:** \`your-label\`
+
+**Code Review Suggestions:**
+- ...
+    
+Git Diff:
 ${diff}
 `;
 
@@ -51,28 +64,41 @@ ${diff}
       contents: History,
     });
 
-    History.push({
-      role: "model",
-      parts: [
-        {
-          text: response.text,
-        },
-      ],
-    });
+    const aiOutput = response.text;
+    console.log(aiOutput);
 
-    console.log(response.text);
+    // Extract label from AI response
+    const labelMatch = aiOutput.match(/Suggested Label:\s*`(.+?)`/);
+    const suggestedLabel = labelMatch ? labelMatch[1] : null;
 
-    // Post the review to the PR
+    // Post the comment
     await octokit.issues.createComment({
       owner,
       repo: repoName,
       issue_number: prNumber,
-      body: `AI Code Summary & Review:\n\n${response.text}`,
+      body: `**AI Code Summary & Review:**\n\n${aiOutput}`,
     });
 
-    console.log("Review posted.");
+    console.log("Review comment posted.");
+
+    // Apply the label
+    if (suggestedLabel) {
+      try {
+        await octokit.issues.addLabels({
+          owner,
+          repo: repoName,
+          issue_number: prNumber,
+          labels: [suggestedLabel],
+        });
+        console.log(` Label '${suggestedLabel}' added.`);
+      } catch (err) {
+        console.warn(" Could not apply label:", err.message);
+      }
+    } else {
+      console.log(" No label detected from AI.");
+    }
   } catch (error) {
-    console.error("Error:", error);
+    console.error(" Error:", error);
     process.exit(1);
   }
 })();
