@@ -2,7 +2,7 @@ import dotenv from "dotenv";
 import { GoogleGenAI } from "@google/genai";
 import { Octokit } from "@octokit/rest";
 import { execSync } from "child_process";
-import { getInlineComments } from "./inlineReview";
+import { getInlineComments } from "./inlineReview.js";
 
 dotenv.config();
 const History = [];
