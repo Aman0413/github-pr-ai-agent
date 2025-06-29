@@ -73,24 +73,13 @@ ${diff}
       contents: History,
     });
 
-    const aiOutput = response.text;
     const aiText = response.text.trim();
-    console.log(aiOutput);
+    console.log(aiText);
 
     // Separate JSON suggestions from label
     const labelMatch = aiText.match(/Suggested Label:\s*`(.+?)`/);
     const suggestedLabel = labelMatch?.[1] ?? null;
     const jsonPart = aiText.split("Suggested Label:")[0].trim();
-
-    // hello
-    let suggestions = [];
-
-    try {
-      suggestions = JSON.parse(jsonPart);
-    } catch (err) {
-      console.error(" Failed to parse AI output as JSON.");
-      console.error(jsonPart);
-    }
 
     // Post the comment
     await octokit.issues.createComment({
@@ -129,6 +118,8 @@ ${diff}
     const commitId = pr.data.head.sha;
 
     // Post inline comments
+    const suggestions = await getInlineComments(diff);
+    console.log("Suggestion: " + suggestions);
     for (const s of suggestions) {
       try {
         await octokit.pulls.createReviewComment({
