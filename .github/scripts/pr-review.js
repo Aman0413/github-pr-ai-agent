@@ -20,7 +20,14 @@ const octokit = new Octokit({ auth: token });
 (async () => {
   try {
     // Get the latest diff
-    const diff = execSync("git diff HEAD^1 HEAD").toString();
+    let diff = "";
+
+    try {
+      diff = execSync("git diff HEAD^1 HEAD").toString();
+    } catch (err) {
+      console.warn("No previous commit found. Falling back to full diff.");
+      diff = execSync("git diff").toString();
+    }
 
     // PROMPT: summarize + review
     const prompt = `
