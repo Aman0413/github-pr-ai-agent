@@ -20,6 +20,7 @@
   "homepage": "https://github.com/Aman0413/github-pr-ai-agent#readme",
   "dependencies": {
     "@google/genai": "^1.7.0",
+    "@octokit/app": "^16.0.1",
     "@octokit/rest": "^22.0.0",
     "child_process": "^1.0.2",
     "dotenv": "^17.0.0"
