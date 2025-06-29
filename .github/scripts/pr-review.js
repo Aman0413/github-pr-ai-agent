@@ -74,6 +74,7 @@ ${diff}
     });
 
     const aiOutput = response.text;
+    const aiText = response.text.trim();
     console.log(aiOutput);
 
     // Separate JSON suggestions from label
