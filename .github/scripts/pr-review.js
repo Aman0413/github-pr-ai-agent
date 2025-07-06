@@ -20,7 +20,6 @@ const token = process.env.GITHUB_TOKEN;
 
 // GitHub App credentials
 const appId = process.env.APP_ID;
-// const installationId = process.env.INSTALLATION_ID;
 const privateKey = fs.readFileSync(process.env.PRIVATE_KEY_PATH, "utf8");
 
 // Authenticate app
@@ -99,7 +98,7 @@ Git Diff:
 ${diff}
 `;
 
-    // hello
+    // hello aman
     History.push({
       role: "user",
       parts: [{ text: prompt }],
