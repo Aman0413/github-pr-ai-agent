@@ -4,10 +4,10 @@ import { Octokit } from "@octokit/rest";
 import { execSync } from "child_process";
 import { createAppAuth } from "@octokit/auth-app";
 import { getInlineComments } from "./inlineReview.js";
-import fs from "fs";
 
 dotenv.config();
 const History = [];
+console.log("API ", process.env.GEMINI_API_KEY);
 
 const ai = new GoogleGenAI({
   apiKey: process.env.GEMINI_API_KEY,
@@ -16,11 +16,11 @@ const ai = new GoogleGenAI({
 const repo = process.env.GITHUB_REPOSITORY;
 const [owner, repoName] = repo.split("/");
 const prNumber = process.env.GITHUB_REF.split("/")[2];
-const token = process.env.GITHUB_TOKEN;
 
 // GitHub App credentials
 const appId = process.env.APP_ID;
 const privateKey = process.env.PRIVATE_KEY?.replace(/\\n/g, "\n");
+console.log("privateKey", privateKey);
 
 // Authenticate app
 const octokitApp = new Octokit({
