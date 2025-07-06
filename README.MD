@@ -22,3 +22,7 @@ A GitHub Action that automatically reviews pull requests using Google Gemini AI.
 - [GitHub Actions](https://docs.github.com/en/actions)
 - [Octokit (GitHub REST API client)](https://octokit.github.io/rest.js/)
 - Node.js (v18+)
+
+## Demo Video
+
+- [Demo](https://drive.google.com/file/d/1QG8_CmiKpRwXRaD2DZUbzE51nboeJsEo/view?usp=drive_link)
