@@ -20,7 +20,7 @@ const token = process.env.GITHUB_TOKEN;
 
 // GitHub App credentials
 const appId = process.env.APP_ID;
-const privateKey = fs.readFileSync(process.env.PRIVATE_KEY_PATH, "utf8");
+const privateKey = process.env.PRIVATE_KEY?.replace(/\\n/g, "\n");
 
 // Authenticate app
 const octokitApp = new Octokit({
