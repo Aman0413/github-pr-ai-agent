@@ -29,5 +29,5 @@ jobs:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           APP_ID: ${{ secrets.APP_ID }}
           INSTALLATION_ID: ${{ secrets.INSTALLATION_ID }}
-          PRIVATE_KEY_PATH: .github/app-private-key.pem
+          PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
         run: node .github/scripts/pr-review.js

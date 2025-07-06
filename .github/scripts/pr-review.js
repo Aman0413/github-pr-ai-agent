@@ -4,7 +4,6 @@ import { Octokit } from "@octokit/rest";
 import { execSync } from "child_process";
 import { createAppAuth } from "@octokit/auth-app";
 import { getInlineComments } from "./inlineReview.js";
-import fs from "fs";
 
 dotenv.config();
 const History = [];
@@ -16,12 +15,10 @@ const ai = new GoogleGenAI({
 const repo = process.env.GITHUB_REPOSITORY;
 const [owner, repoName] = repo.split("/");
 const prNumber = process.env.GITHUB_REF.split("/")[2];
-const token = process.env.GITHUB_TOKEN;
 
 // GitHub App credentials
 const appId = process.env.APP_ID;
-// const installationId = process.env.INSTALLATION_ID;
-const privateKey = fs.readFileSync(process.env.PRIVATE_KEY_PATH, "utf8");
+const privateKey = process.env.PRIVATE_KEY?.replace(/\\n/g, "\n");
 
 // Authenticate app
 const octokitApp = new Octokit({
@@ -99,6 +96,7 @@ Git Diff:
 ${diff}
 `;
 
+    // hello aman
     History.push({
       role: "user",
       parts: [{ text: prompt }],
